@@ -44,20 +44,19 @@ function scaleIng(ing, s) {
 }
 
 async function callAI(prompt) {
-  var res = await fetch("https://api.anthropic.com/v1/messages", {
+  var res = await fetch("/api/chat", {
     method: "POST",
-    headers: { "Content-Type": "application/json", "anthropic-dangerous-direct-browser-access": "true" },
-    body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 1500, messages: [{ role: "user", content: prompt }] })
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ prompt })
   });
   var data = await res.json();
-  if (data.error) throw new Error(data.error.message);
+  if (data.error) throw new Error(data.error);
   var tb = data.content && data.content.find(function(b) { return b.type === "text"; });
   var text = tb ? tb.text : "";
   var m = text.match(/\{[\s\S]*\}/);
   if (!m) throw new Error("JSONが見つかりません");
   return JSON.parse(m[0]);
 }
-
 function AdBanner() {
   return (
     <div style={{ position:"sticky", bottom:0, left:0, right:0, background:"#fff", borderTop:"1px solid #f3d5b0", padding:"8px 16px", display:"flex", flexDirection:"column", alignItems:"center", gap:4, zIndex:100 }}>
