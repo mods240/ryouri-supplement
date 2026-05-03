@@ -64,6 +64,10 @@ function AdBanner() {
       <div style={{ width:"100%", maxWidth:520, height:60, background:"#f9f9f9", border:"1px dashed #e0c9b0", borderRadius:8, display:"flex", alignItems:"center", justifyContent:"center", color:"#c49a70", fontSize:12, fontWeight:700 }}>
         広告スペース（320x60）
       </div>
+      <div style={{ display:"flex", gap:16, marginTop:4 }}>
+        <a href="/privacy" style={{ fontSize:10, color:"#bbb", textDecoration:"none" }}>プライバシーポリシー</a>
+        <span style={{ fontSize:10, color:"#bbb" }}>©2025 AI健康料理提案</span>
+      </div>
     </div>
   );
 }
