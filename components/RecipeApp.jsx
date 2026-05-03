@@ -9,7 +9,7 @@ var SUPERMARKETS = [
   { id: "seijo", name: "成城石井", emoji: "🍷", color: "#4a148c", searchUrl: function(q){ return "https://www.seijoishii.com/search?q=" + encodeURIComponent(q); } }
 ];
 
-var FREE_LIMIT = 1;
+var FREE_LIMIT = 999;
 var AD_BONUS = 3;
 
 function todayKey() {
@@ -115,7 +115,7 @@ function UsageBanner(props) {
             <p style={{ margin:"3px 0 0", fontSize:11, color:"#e65100" }}>広告視聴で +{AD_BONUS}回もらえます</p>
           )}
         </div>
-        <button onClick={props.onUpgrade} style={{ padding:"6px 10px", borderRadius:10, border:"none", background:"linear-gradient(90deg,#e07b3a,#d05a20)", color:"#fff", fontWeight:800, fontSize:11, cursor:"pointer", flexShrink:0, whiteSpace:"nowrap" }}>
+        <button onClick={props.onUpgrade} style={{ padding:"6px 10px", borderRadius:10, border:"none", background:"linear-gradient(90deg,#e07b3a,#d05a20)", color:"#fff", fontWeight:800, fontSize:11, cursor:"pointer", flexShrink:0, whiteSpace:"nowrap", display:"none" }}>
           👑 アップグレード
         </button>
       </div>
@@ -508,7 +508,7 @@ export default function App() {
   useEffect(function() { try { localStorage.setItem("hist", JSON.stringify(hist)); } catch(e) {} }, [hist]);
   useEffect(function() { try { localStorage.setItem("supers", JSON.stringify(supers)); } catch(e) {} }, [supers]);
 
-  function canUse() { return isPro || (getUsage().count || 0) < FREE_LIMIT; }
+  function canUse() { return true; }
   function useOne() { var u = getUsage(); u.count = (u.count||0) + 1; saveUsage(u); setUsage(Object.assign({}, u)); }
   function toggleSuper(id) { setSupers(function(p) { return p.includes(id) ? p.filter(function(x){ return x!==id; }) : p.concat([id]); }); }
   function isFav(r) { return r ? favs.some(function(f){ return f.name===r.name; }) : false; }
