@@ -60,6 +60,7 @@ async function callAI(prompt) {
 function AdBanner() {
   return (
     <div style={{ position:"sticky", bottom:0, left:0, right:0, background:"#fff", borderTop:"1px solid #f3d5b0", padding:"8px 16px", display:"flex", flexDirection:"column", alignItems:"center", gap:4, zIndex:100 }}>
+      <style>{`#vercel-live-feedback, vercel-live-feedback { display: none !important; }`}</style>
       <p style={{ margin:0, fontSize:9, color:"#bbb", letterSpacing:1 }}>スポンサー広告</p>
       <div style={{ width:"100%", maxWidth:520, height:60, background:"#f9f9f9", border:"1px dashed #e0c9b0", borderRadius:8, display:"flex", alignItems:"center", justifyContent:"center", color:"#c49a70", fontSize:12, fontWeight:700 }}>
         広告スペース（320x60）
@@ -291,36 +292,48 @@ function ShareButtons({ recipe, nutrients }) {
     setCopied(true); setTimeout(function(){ setCopied(false); }, 2500);
   }
 
-  var btns = [
-    { label: "X", icon: "𝕏", bg: "#000", onClick: function(){ window.open("https://twitter.com/intent/tweet?text=" + enc, "_blank", "width=600,height=400"); } },
-    { label: "LINE", icon: "💬", bg: "#06c755", onClick: function(){ window.open("https://social-plugins.line.me/lineit/share?url=" + encUrl + "&text=" + enc, "_blank", "width=600,height=600"); } },
-    { label: "FB", icon: "f", bg: "#1877f2", onClick: function(){ window.open("https://www.facebook.com/sharer/sharer.php?u=" + encUrl, "_blank", "width=600,height=400"); } },
-    { label: "Instagram", icon: "📸", bg: "linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)", onClick: function(){ copyText(); setIgTip(true); setTimeout(function(){ setIgTip(false); }, 5000); } },
-    { label: copied ? "コピー済✓" : "テキスト\nコピー", icon: copied ? "✓" : "📋", bg: copied ? "#43a047" : "#607d8b", onClick: copyText },
+  var sns = [
+    { label: "X でシェア", emoji: "𝕏", bg: "#000", onClick: function(){ window.open("https://twitter.com/intent/tweet?text=" + enc, "_blank", "width=600,height=400"); } },
+    { label: "LINEで送る", emoji: "💬", bg: "#06c755", onClick: function(){ window.open("https://social-plugins.line.me/lineit/share?url=" + encUrl + "&text=" + enc, "_blank", "width=600,height=600"); } },
+    { label: "Facebookへ", emoji: "f", bg: "#1877f2", onClick: function(){ window.open("https://www.facebook.com/sharer/sharer.php?u=" + encUrl, "_blank", "width=600,height=400"); } },
+    { label: "Instagramへ", emoji: "📸", bg: "linear-gradient(135deg,#f09433,#dc2743,#bc1888)", onClick: function(){ copyText(); setIgTip(true); setTimeout(function(){ setIgTip(false); }, 5000); } },
   ];
 
   return (
-    <div style={{ background:"#fff3e0", borderRadius:14, padding:16, marginBottom:16, border:"1.5px solid #ffcc80" }}>
-      <p style={{ margin:"0 0 10px", fontSize:13, fontWeight:800, color:"#e65100" }}>🎉 このレシピをシェアする</p>
-      <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
-        {btns.map(function(btn, i) {
+    <div style={{ margin:"16px 0", borderRadius:18, overflow:"hidden", border:"2px solid #ffb74d", boxShadow:"0 4px 16px rgba(224,123,58,0.15)" }}>
+      {/* ヘッダー */}
+      <div style={{ background:"linear-gradient(90deg,#e07b3a,#d05a20)", padding:"12px 16px", display:"flex", alignItems:"center", gap:8 }}>
+        <span style={{ fontSize:20 }}>🎉</span>
+        <div>
+          <p style={{ margin:0, fontSize:14, fontWeight:800, color:"#fff" }}>このレシピをSNSでシェア！</p>
+          <p style={{ margin:0, fontSize:11, color:"rgba(255,255,255,0.8)" }}>みんなに教えてあげましょう</p>
+        </div>
+      </div>
+      {/* ボタングリッド */}
+      <div style={{ background:"#fff8f0", padding:"14px 12px", display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 }}>
+        {sns.map(function(btn, i) {
           return (
-            <button key={i} onClick={btn.onClick} style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:3, padding:"8px 12px", borderRadius:12, border:"none", background:btn.bg, color:"#fff", fontWeight:800, fontSize:11, cursor:"pointer", minWidth:52, lineHeight:1.3 }}>
-              <span style={{ fontSize:16 }}>{btn.icon}</span>
-              <span style={{ whiteSpace:"pre-line", textAlign:"center" }}>{btn.label}</span>
+            <button key={i} onClick={btn.onClick}
+              style={{ display:"flex", alignItems:"center", gap:8, padding:"12px 14px", borderRadius:12, border:"none", background:btn.bg, color:"#fff", fontWeight:800, fontSize:13, cursor:"pointer", boxShadow:"0 2px 8px rgba(0,0,0,0.15)", transition:"opacity 0.15s" }}
+              onMouseOver={function(e){ e.currentTarget.style.opacity="0.85"; }}
+              onMouseOut={function(e){ e.currentTarget.style.opacity="1"; }}>
+              <span style={{ fontSize:18, minWidth:22, textAlign:"center" }}>{btn.emoji}</span>
+              <span>{btn.label}</span>
             </button>
           );
         })}
+        {/* コピーボタン（全幅） */}
+        <button onClick={copyText}
+          style={{ gridColumn:"1 / -1", display:"flex", alignItems:"center", justifyContent:"center", gap:8, padding:"11px 14px", borderRadius:12, border:"2px solid "+(copied?"#43a047":"#ddd"), background:copied?"#e8f5e9":"#fff", color:copied?"#2e7d32":"#666", fontWeight:800, fontSize:13, cursor:"pointer" }}>
+          <span style={{ fontSize:16 }}>{copied ? "✅" : "📋"}</span>
+          <span>{copied ? "コピーしました！" : "テキストをコピーする（Instagram等に使えます）"}</span>
+        </button>
       </div>
       {igTip && (
-        <div style={{ marginTop:10, padding:"10px 12px", background:"#fce4ec", borderRadius:10, border:"1px solid #f48fb1", fontSize:12, color:"#880e4f", lineHeight:1.6 }}>
-          📋 テキストをコピーしました！<br />Instagramを開いてストーリーズや投稿に貼り付けてシェアしてください✨
+        <div style={{ background:"#fce4ec", padding:"10px 16px", fontSize:12, color:"#880e4f", lineHeight:1.7, borderTop:"1px solid #f48fb1" }}>
+          📋 コピー完了！Instagramアプリを開いて、ストーリーズや投稿画面にそのまま貼り付けてシェアできます✨
         </div>
       )}
-      <details style={{ marginTop:10 }}>
-        <summary style={{ fontSize:11, color:"#aaa", cursor:"pointer" }}>シェア内容を確認</summary>
-        <pre style={{ marginTop:6, fontSize:11, color:"#888", background:"#fff", borderRadius:8, padding:10, whiteSpace:"pre-wrap", wordBreak:"break-all", border:"1px solid #eee" }}>{shareText}</pre>
-      </details>
     </div>
   );
 }
@@ -440,6 +453,8 @@ function RecipeView(props) {
           {props.isFav ? "❤️ お気に入り済み" : "お気に入りに追加"}
         </button>
 
+        <ShareButtons recipe={r} nutrients={props.nutrients} />
+
         <div style={{ background:"#fff8f0", borderRadius:12, padding:14, marginBottom:16 }}>
           <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:10 }}>
             <span style={{ fontWeight:800, color:"#7c3a1e", fontSize:15 }}>人数調整</span>
@@ -482,8 +497,6 @@ function RecipeView(props) {
           <h3 style={{ color:"#7c3a1e", fontSize:14, fontWeight:800, margin:"0 0 8px" }}>栄養ポイント</h3>
           <p style={{ margin:0, fontSize:14, color:"#5a3010", lineHeight:1.7 }}>{r.nutritionNote}</p>
         </div>
-
-        <ShareButtons recipe={r} nutrients={props.nutrients} />
 
         <RecipeArrange recipe={r} condition={props.condition} mood={props.mood} pending={props.pending} setPending={props.setPending} onApply={props.onApply} />
 
