@@ -1,5 +1,4 @@
 import Anthropic from "@anthropic-ai/sdk";
-
 export async function POST(req) {
   try {
     const { prompt } = await req.json();
