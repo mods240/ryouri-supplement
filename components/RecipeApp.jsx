@@ -264,6 +264,67 @@ function ShoppingChecklist(props) {
   );
 }
 
+function ShareButtons({ recipe, nutrients }) {
+  var [copied, setCopied] = useState(false);
+  var [igTip, setIgTip] = useState(false);
+  if (!recipe || !recipe.name) return null;
+
+  var APP_URL = "https://ryouri-supplement.vercel.app";
+  var nutrientText = nutrients && nutrients.length > 0
+    ? "\n✨ 補給できる栄養: " + nutrients.slice(0, 3).map(function(n){ return n.name; }).join("・")
+    : "";
+  var shareText =
+    "🍳 今日のレシピ「" + recipe.name + "」\n" +
+    (recipe.description ? recipe.description.slice(0, 50) + "…" : "") +
+    nutrientText +
+    "\n\n料理はこころのサプリ で生成 👇\n" + APP_URL;
+
+  var enc = encodeURIComponent(shareText);
+  var encUrl = encodeURIComponent(APP_URL);
+
+  function copyText() {
+    try { navigator.clipboard.writeText(shareText); } catch(e) {
+      var el = document.createElement("textarea");
+      el.value = shareText; document.body.appendChild(el); el.select();
+      document.execCommand("copy"); document.body.removeChild(el);
+    }
+    setCopied(true); setTimeout(function(){ setCopied(false); }, 2500);
+  }
+
+  var btns = [
+    { label: "X", icon: "𝕏", bg: "#000", onClick: function(){ window.open("https://twitter.com/intent/tweet?text=" + enc, "_blank", "width=600,height=400"); } },
+    { label: "LINE", icon: "💬", bg: "#06c755", onClick: function(){ window.open("https://social-plugins.line.me/lineit/share?url=" + encUrl + "&text=" + enc, "_blank", "width=600,height=600"); } },
+    { label: "FB", icon: "f", bg: "#1877f2", onClick: function(){ window.open("https://www.facebook.com/sharer/sharer.php?u=" + encUrl, "_blank", "width=600,height=400"); } },
+    { label: "Instagram", icon: "📸", bg: "linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)", onClick: function(){ copyText(); setIgTip(true); setTimeout(function(){ setIgTip(false); }, 5000); } },
+    { label: copied ? "コピー済✓" : "テキスト\nコピー", icon: copied ? "✓" : "📋", bg: copied ? "#43a047" : "#607d8b", onClick: copyText },
+  ];
+
+  return (
+    <div style={{ background:"#fff3e0", borderRadius:14, padding:16, marginBottom:16, border:"1.5px solid #ffcc80" }}>
+      <p style={{ margin:"0 0 10px", fontSize:13, fontWeight:800, color:"#e65100" }}>🎉 このレシピをシェアする</p>
+      <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
+        {btns.map(function(btn, i) {
+          return (
+            <button key={i} onClick={btn.onClick} style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:3, padding:"8px 12px", borderRadius:12, border:"none", background:btn.bg, color:"#fff", fontWeight:800, fontSize:11, cursor:"pointer", minWidth:52, lineHeight:1.3 }}>
+              <span style={{ fontSize:16 }}>{btn.icon}</span>
+              <span style={{ whiteSpace:"pre-line", textAlign:"center" }}>{btn.label}</span>
+            </button>
+          );
+        })}
+      </div>
+      {igTip && (
+        <div style={{ marginTop:10, padding:"10px 12px", background:"#fce4ec", borderRadius:10, border:"1px solid #f48fb1", fontSize:12, color:"#880e4f", lineHeight:1.6 }}>
+          📋 テキストをコピーしました！<br />Instagramを開いてストーリーズや投稿に貼り付けてシェアしてください✨
+        </div>
+      )}
+      <details style={{ marginTop:10 }}>
+        <summary style={{ fontSize:11, color:"#aaa", cursor:"pointer" }}>シェア内容を確認</summary>
+        <pre style={{ marginTop:6, fontSize:11, color:"#888", background:"#fff", borderRadius:8, padding:10, whiteSpace:"pre-wrap", wordBreak:"break-all", border:"1px solid #eee" }}>{shareText}</pre>
+      </details>
+    </div>
+  );
+}
+
 function RecipeArrange(props) {
   var [open, setOpen] = useState(false);
   var [input, setInput] = useState("");
@@ -422,6 +483,8 @@ function RecipeView(props) {
           <p style={{ margin:0, fontSize:14, color:"#5a3010", lineHeight:1.7 }}>{r.nutritionNote}</p>
         </div>
 
+        <ShareButtons recipe={r} nutrients={props.nutrients} />
+
         <RecipeArrange recipe={r} condition={props.condition} mood={props.mood} pending={props.pending} setPending={props.setPending} onApply={props.onApply} />
 
         <ShoppingChecklist ingredients={r.ingredients} servings={s} />
@@ -565,7 +628,8 @@ export default function App() {
     condition:condition, mood:mood,
     pending:pending, setPending:setPending, onApply:applyArrange,
     onReset:reset, onGacha:gacha, onSimple:simple,
-    gLoading:gLoading, excluded:excluded
+    gLoading:gLoading, excluded:excluded,
+    nutrients: analysis ? analysis.nutrients : []
   };
 
   function wrap(ch) {
