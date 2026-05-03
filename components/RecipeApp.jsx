@@ -540,8 +540,6 @@ export default function App() {
 
   async function gacha() {
     if (!recipe) return;
-    if (!canUse()) { setShowUpgrade(true); return; }
-    useOne();
     setGLoading(true);
     var ex = excluded.concat([recipe.name]); setExcluded(ex);
     try { var p = await callAI(buildPrompt(ex, simpleMode)); setRecipe(p.recipe); addHist(p.recipe); } catch(e) { setError(e.message); }
@@ -550,8 +548,6 @@ export default function App() {
 
   async function simple() {
     if (!recipe) return;
-    if (!canUse()) { setShowUpgrade(true); return; }
-    useOne();
     setSimpleMode(true); setGLoading(true);
     var ex = excluded.concat([recipe.name]); setExcluded(ex);
     try { var p = await callAI(buildPrompt(ex, true)); setRecipe(p.recipe); addHist(p.recipe); } catch(e) { setError(e.message); }
