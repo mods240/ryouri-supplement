@@ -150,11 +150,11 @@ function UpgradeModal(props) {
           <p style={{ margin:0, fontSize:14, color:"#9e9e9e" }}>❌ API制限時のみ一時利用不可</p>
         </div>
         <div style={{ textAlign:"center", marginBottom:16 }}>
-          <p style={{ margin:"0 0 4px", fontSize:24, fontWeight:800, color:"#e07b3a" }}>月額 150円</p>
-          <p style={{ margin:0, fontSize:12, color:"#a0613a" }}>いつでもキャンセル可能</p>
+          <p style={{ margin:"0 0 4px", fontSize:24, fontWeight:800, color:"#e07b3a" }}>現在 無料公開中！</p>
+          <p style={{ margin:0, fontSize:12, color:"#a0613a" }}>今すぐ全機能をお試しください</p>
         </div>
         <button onClick={props.onClose} style={{ width:"100%", padding:"14px 0", borderRadius:14, border:"none", background:"linear-gradient(90deg,#e07b3a,#d05a20)", color:"#fff", fontWeight:800, fontSize:16, cursor:"pointer", marginBottom:10 }}>
-          👑 プレミアムにアップグレード
+          🎉 無料で始める
         </button>
         <button onClick={props.onClose} style={{ width:"100%", padding:"10px 0", borderRadius:14, border:"1.5px solid #f3d5b0", background:"#fff", color:"#b56a2a", fontWeight:700, fontSize:14, cursor:"pointer" }}>
           閉じる
