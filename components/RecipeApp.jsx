@@ -42,14 +42,15 @@ function scaleIng(ing, s) {
     return (Math.round(parseFloat(n) * s * 10) / 10) + u;
   });
 }
+
 async function callAI(prompt) {
-  var res = await fetch("/api/chat", {
+  var res = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ prompt })
+    headers: { "Content-Type": "application/json", "anthropic-dangerous-direct-browser-access": "true" },
+    body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 1500, messages: [{ role: "user", content: prompt }] })
   });
   var data = await res.json();
-  if (data.error) throw new Error(data.error);
+  if (data.error) throw new Error(data.error.message);
   var tb = data.content && data.content.find(function(b) { return b.type === "text"; });
   var text = tb ? tb.text : "";
   var m = text.match(/\{[\s\S]*\}/);
@@ -63,10 +64,6 @@ function AdBanner() {
       <p style={{ margin:0, fontSize:9, color:"#bbb", letterSpacing:1 }}>スポンサー広告</p>
       <div style={{ width:"100%", maxWidth:520, height:60, background:"#f9f9f9", border:"1px dashed #e0c9b0", borderRadius:8, display:"flex", alignItems:"center", justifyContent:"center", color:"#c49a70", fontSize:12, fontWeight:700 }}>
         広告スペース（320x60）
-      </div>
-      <div style={{ display:"flex", gap:16, marginTop:4 }}>
-        <a href="/privacy" style={{ fontSize:10, color:"#bbb", textDecoration:"none" }}>プライバシーポリシー</a>
-        <span style={{ fontSize:10, color:"#bbb" }}>©2025 AI健康料理提案</span>
       </div>
     </div>
   );
@@ -128,7 +125,7 @@ function UsageBanner(props) {
             広告視聴 +{AD_BONUS}回
           </button>
           <button onClick={props.onUpgrade} style={{ flex:1, padding:"8px 0", borderRadius:10, border:"none", background:"linear-gradient(90deg,#e07b3a,#d05a20)", color:"#fff", fontWeight:800, fontSize:12, cursor:"pointer" }}>
-            👑🎉 期間限定 無料公開中！
+            👑 150円で無制限
           </button>
         </div>
       )}
@@ -153,11 +150,11 @@ function UpgradeModal(props) {
           <p style={{ margin:0, fontSize:14, color:"#9e9e9e" }}>❌ API制限時のみ一時利用不可</p>
         </div>
         <div style={{ textAlign:"center", marginBottom:16 }}>
-          <p style={{ margin:"0 0 4px", fontSize:24, fontWeight:800, color:"#e07b3a" }}>🎉 期間限定 完全無料公開中！</p>
-          <p style={{ margin:0, fontSize:12, color:"#a0613a" }}>通常月額150円予定 → 今なら完全無料！</p>
+          <p style={{ margin:"0 0 4px", fontSize:24, fontWeight:800, color:"#e07b3a" }}>月額 150円</p>
+          <p style={{ margin:0, fontSize:12, color:"#a0613a" }}>いつでもキャンセル可能</p>
         </div>
         <button onClick={props.onClose} style={{ width:"100%", padding:"14px 0", borderRadius:14, border:"none", background:"linear-gradient(90deg,#e07b3a,#d05a20)", color:"#fff", fontWeight:800, fontSize:16, cursor:"pointer", marginBottom:10 }}>
-          🎉 無料で始める
+          👑 プレミアムにアップグレード
         </button>
         <button onClick={props.onClose} style={{ width:"100%", padding:"10px 0", borderRadius:14, border:"1.5px solid #f3d5b0", background:"#fff", color:"#b56a2a", fontWeight:700, fontSize:14, cursor:"pointer" }}>
           閉じる
