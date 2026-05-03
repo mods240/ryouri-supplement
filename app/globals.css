@@ -9,3 +9,10 @@ body {
   color: #333;
   font-family: 'Hiragino Sans', 'Meiryo', sans-serif;
 }
+/* Vercel feedback widget を非表示 */
+vercel-live-feedback,
+#vercel-live-feedback,
+[data-vercel-feedback],
+nextjs-portal {
+  display: none !important;
+}
