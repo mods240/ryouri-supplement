@@ -508,7 +508,7 @@ function RecipeView(props) {
             <button onClick={props.onOpenSuper} style={{ fontSize:11, color:"#4a7c4e", background:"none", border:"1px solid #a5d6a7", borderRadius:10, padding:"2px 8px", cursor:"pointer", fontWeight:700 }}>変更</button>
           </div>
           <p style={{ color:"#4a7c4e", fontSize:12, margin:"0 0 12px" }}>設定したスーパーで食材を検索できます</p>
-          <p style={{ color:"#e07b3a", fontSize:11, margin:"0 0 12px", background:"#fff8f0", borderRadius:8, padding:"6px 10px" }}>⚠️ 現在、一部のスーパーはトップページへの遷移となります。リンク先で食材名を検索してください。順次改善予定です！</p>
+          <p style={{ color:"#4a7c4e", fontSize:11, margin:"0 0 12px", background:"#f1f8e9", borderRadius:8, padding:"8px 12px", lineHeight:1.6 }}>🛒 お買い物に行く時間がない方や、重い荷物を運ぶのが大変な方は、ネットスーパーのご利用もおすすめです。<br /><span style={{ color:"#7a9b7e", fontSize:10 }}>※当サイトはアフィリエイトリンクを使用しておらず、紹介による報酬は発生しません。</span></p>
           <div style={{ display:"flex", flexDirection:"column", gap:8, marginBottom:12 }}>
             {props.supers.map(function(id) {
               var sm = SUPERMARKETS.find(function(x) { return x.id === id; });
