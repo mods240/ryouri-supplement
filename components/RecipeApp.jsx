@@ -9,7 +9,7 @@ var SUPERMARKETS = [
   { id: "seijo", name: "成城石井", emoji: "🍷", color: "#4a148c", searchUrl: function(q){ return "https://www.seijoishii.com/search?q=" + encodeURIComponent(q); } }
 ];
 
-var FREE_LIMIT = 999;
+var FREE_LIMIT = 30;
 var AD_BONUS = 3;
 
 function todayKey() {
@@ -89,7 +89,7 @@ function Tag(props) {
 
 function UsageBanner(props) {
   var remaining = Math.max(0, FREE_LIMIT - (props.usage.count || 0));
-  var isLow = remaining <= 1;
+  var isLow = remaining <= 5;
   if (props.isPro) {
     return (
       <div style={{ background:"linear-gradient(90deg,#1a237e,#283593)", borderRadius:12, padding:"10px 16px", marginBottom:16, display:"flex", alignItems:"center", justifyContent:"space-between" }}>
@@ -110,7 +110,6 @@ function UsageBanner(props) {
           <p style={{ margin:"0 0 4px", fontSize:14, fontWeight:700, color:"#374151" }}>
             本日あと <strong style={{ fontSize:20, color:remaining===0?"#e65100":"#e07b3a" }}>{remaining}</strong> 回
           </p>
-          <p style={{ margin:0, fontSize:11, color:"#9ca3af" }}>ガチャ・アレンジは広告視聴で利用可</p>
           {isLow && remaining > 0 && (
             <p style={{ margin:"3px 0 0", fontSize:11, color:"#e65100" }}>広告視聴で +{AD_BONUS}回もらえます</p>
           )}
@@ -127,6 +126,14 @@ function UsageBanner(props) {
           <button onClick={props.onUpgrade} style={{ flex:1, padding:"8px 0", borderRadius:10, border:"none", background:"linear-gradient(90deg,#e07b3a,#d05a20)", color:"#fff", fontWeight:800, fontSize:12, cursor:"pointer" }}>
             👑 150円で無制限
           </button>
+        </div>
+      )}
+      {isLow && (
+        <div style={{ marginTop:12, padding:"10px 12px", background:"linear-gradient(135deg,#fff4e6,#ffe8cc)", border:"2px solid #e07b3a", borderRadius:12, boxShadow:"0 2px 8px rgba(224,123,58,0.2)" }}>
+          <p style={{ margin:"0 0 6px", fontSize:9, color:"#b56a2a", fontWeight:800, letterSpacing:1, textAlign:"center" }}>━ 広告 ━</p>
+          <div style={{ width:"100%", height:80, background:"#fff", border:"1.5px dashed #e07b3a", borderRadius:8, display:"flex", alignItems:"center", justifyContent:"center", color:"#e07b3a", fontSize:13, fontWeight:800 }}>
+            広告スペース（300x80）
+          </div>
         </div>
       )}
     </div>
