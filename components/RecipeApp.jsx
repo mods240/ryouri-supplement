@@ -360,7 +360,10 @@ function RecipeArrange(props) {
     setLog(function(p) { return p.concat([{ role:"user", text:txt }]); });
     setLoading(true);
     try {
-      var prompt = "レシピアレンジリクエストです。\n現在のレシピ: " + props.recipe.name + "\n材料: " + props.recipe.ingredients.join(", ") + "\n体調: " + (props.condition||"特になし") + "\n気分: " + (props.mood||"特になし") + "\nリクエスト: " + txt + "\n\ncommentにアドバイスを書き、末尾は必ず「このレシピに更新しますか？」で終わること。JSONのみ返答:\n{\"comment\":\"...\",\"recipe\":{\"name\":\"...\",\"description\":\"...\",\"time\":\"...\",\"difficulty\":\"簡単\",\"ingredients\":[\"...\"],\"steps\":[\"...\"],\"nutritionNote\":\"...\"}}";
+      var currentCal = props.recipe.calories || "";
+      var calInfo = currentCal ? "\n現在のカロリー: " + currentCal : "";
+      var calInst = currentCal ? "元のカロリーは" + currentCal + "。アレンジ後のカロリーも計算し、増減があればcommentに例えば「カロリーが約100kcal増えますがよろしいですか？」のように明記すること。" : "";
+      var prompt = "レシピアレンジリクエストです。\n現在のレシピ: " + props.recipe.name + "\n材料: " + props.recipe.ingredients.join(", ") + calInfo + "\n体調: " + (props.condition||"特になし") + "\n気分: " + (props.mood||"特になし") + "\nリクエスト: " + txt + "\n\n" + calInst + "commentにアドバイスを書き、末尾は必ず「このレシピに更新しますか？」で終わること。caloriesフィールドに1人分の概算kcalを約〇〇kcal形式で必ず記載。JSONのみ返答:\n{\"comment\":\"...\",\"recipe\":{\"name\":\"...\",\"description\":\"...\",\"time\":\"...\",\"difficulty\":\"簡単\",\"ingredients\":[\"...\"],\"steps\":[\"...\"],\"nutritionNote\":\"...\",\"calories\":\"約〇〇kcal\"}}";
       var parsed = await callAI(prompt);
       if (!parsed.recipe) throw new Error("recipeが見つかりません");
       props.setPending(parsed.recipe);
