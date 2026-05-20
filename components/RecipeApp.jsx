@@ -453,7 +453,9 @@ function RecipeView(props) {
           <div style={{ display:"flex", justifyContent:"center", gap:8, flexWrap:"wrap" }}>
             <Tag label={"⏱ "+r.time} color="#e8f5e9" tc="#2e7d32" />
             <Tag label={"難易度: "+r.difficulty} color="#e3f2fd" tc="#1565c0" />
+            {r.calories && <Tag label={"🔥 "+r.calories+"/人"} color="#fff3e0" tc="#e65100" />}
           </div>
+          {r.calories && <p style={{ margin:"8px 0 0", fontSize:11, color:"#bbb" }}>※カロリーはAIによる目安です。実際の値は食材・分量により異なります</p>}
         </div>
 
         <button onClick={props.onToggleFav} style={{ width:"100%", padding:"10px 0", borderRadius:12, border:props.isFav?"2px solid #e91e63":"2px solid #f3d5b0", background:props.isFav?"#fce4ec":"#fff8f0", color:props.isFav?"#c2185b":"#b56a2a", fontWeight:800, fontSize:15, cursor:"pointer", marginBottom:16 }}>
@@ -604,7 +606,7 @@ export default function App() {
   function buildPrompt(excl, simple) {
     var ex = excl&&excl.length>0 ? "\n除外: "+excl.join("、") : "";
     var si = simple ? "\nシンプル調理：手順少なく短時間で。" : "";
-    return "栄養士として一人で頑張る方を応援してレシピ提案してください。\n体調:"+(condition||"特になし")+"\n気分:"+(mood||"特になし")+"\n食材:"+(ingredients||"特になし")+"\n料理種類:"+(dishType||"なし")+"\n予算:"+(budget||"なし")+"\n人数:"+servings+"人分"+ex+si+"\n\n毎回異なるレシピを。予算超過食材はbudgetOk:falseで代替。体調に合わない料理種類はapproved:falseで代替。\nJSONのみ:\n{\"hiddenSigns\":[\"サイン\"],\"nutrients\":[{\"name\":\"栄養素\",\"reason\":\"理由\"}],\"budgetCheck\":{\"budgetOk\":true,\"originalIngredient\":\"\",\"alternativeIngredient\":\"\",\"reason\":\"\"},\"dishTypeCheck\":{\"approved\":true,\"requestedType\":\"\",\"suggestedType\":\"\",\"reason\":\"\"},\"recipe\":{\"name\":\"料理名\",\"description\":\"説明\",\"time\":\"時間\",\"difficulty\":\"簡単\",\"ingredients\":[\"食材（分量）\"],\"steps\":[\"手順\"],\"nutritionNote\":\"栄養\"}}";
+    return "栄養士として一人で頑張る方を応援してレシピ提案してください。\n体調:"+(condition||"特になし")+"\n気分:"+(mood||"特になし")+"\n食材:"+(ingredients||"特になし")+"\n料理種類:"+(dishType||"なし")+"\n予算:"+(budget||"なし")+"\n人数:"+servings+"人分"+ex+si+"\n\n毎回異なるレシピを。予算超過食材はbudgetOk:falseで代替。体調に合わない料理種類はapproved:falseで代替。食材欄にkcal指定があればそれを守ること。必ずcaloriesフィールドに1人分の概算kcalを約〇〇kcal形式で記載。\nJSONのみ:\n{\"hiddenSigns\":[\"サイン\"],\"nutrients\":[{\"name\":\"栄養素\",\"reason\":\"理由\"}],\"budgetCheck\":{\"budgetOk\":true,\"originalIngredient\":\"\",\"alternativeIngredient\":\"\",\"reason\":\"\"},\"dishTypeCheck\":{\"approved\":true,\"requestedType\":\"\",\"suggestedType\":\"\",\"reason\":\"\"},\"recipe\":{\"name\":\"料理名\",\"description\":\"説明\",\"time\":\"時間\",\"difficulty\":\"簡単\",\"ingredients\":[\"食材（分量）\"],\"steps\":[\"手順\"],\"nutritionNote\":\"栄養\",\"calories\":\"約〇〇kcal\"}}";
   }
 
   async function analyze() {
@@ -776,8 +778,8 @@ export default function App() {
             );
           })}
           <div style={{ marginBottom:20 }}>
-            <label style={{ display:"block", fontWeight:700, color:"#7c3a1e", marginBottom:8, fontSize:15 }}>食べたい食材・使いたい食材（任意）</label>
-            <input value={ingredients} onChange={function(e){ setIngredients(e.target.value); }} placeholder="例：鶏肉、豆腐、トマト…"
+            <label style={{ display:"block", fontWeight:700, color:"#7c3a1e", marginBottom:8, fontSize:15 }}>食べたい食材・カロリー要望（任意）</label>
+            <input value={ingredients} onChange={function(e){ setIngredients(e.target.value); }} placeholder="例：鶏肉、豆腐 /500kcal以内で…"
               style={{ width:"100%", borderRadius:12, border:"1.5px solid #f3d5b0", padding:"10px 12px", fontSize:14, outline:"none", boxSizing:"border-box", fontFamily:"inherit", color:"#4a2c0a" }} />
           </div>
           <div style={{ marginBottom:20 }}>
