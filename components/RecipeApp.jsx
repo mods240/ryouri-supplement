@@ -60,10 +60,13 @@ async function callAI(prompt) {
 function InstallBanner() {
   var [show, setShow] = useState(false);
   var [deferredPrompt, setDeferredPrompt] = useState(null);
-  var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-  var isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+  // windowはuseEffect内でのみアクセス（SSR対策）
+  var [isIOS, setIsIOS] = useState(false);
 
   useEffect(function() {
+    var ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    setIsIOS(ios);
+    var isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
     if (isStandalone) return;
     var closed = localStorage.getItem('recipe_banner_closed');
     if (closed && Date.now() - parseInt(closed) < 86400000) return;
