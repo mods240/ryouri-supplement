@@ -64,12 +64,12 @@ function InstallBanner() {
   var [isIOS, setIsIOS] = useState(false);
 
   useEffect(function() {
+    var isMobile = /iphone|ipad|ipod|android/i.test(navigator.userAgent);
+    if (!isMobile) return; // PCでは表示しない
     var ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
     setIsIOS(ios);
     var isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
     if (isStandalone) return;
-    var closed = localStorage.getItem('recipe_banner_closed');
-    if (closed && Date.now() - parseInt(closed) < 86400000) return;
 
     // Android Chrome
     var handler = function(e) {
@@ -94,12 +94,13 @@ function InstallBanner() {
       deferredPrompt.userChoice.then(function(){ setDeferredPrompt(null); setShow(false); });
     } else if (isIOS) {
       alert('① SafariでこのページのURLを開く\n② 下部の共有ボタン（四角に矢印）をタップ\n③「ホーム画面に追加」を選ぶ\n\n※ Chrome・Firefoxでは追加できません');
+    } else {
+      alert('Chromeのメニュー（右上の ⋮）をタップして\n「アプリをインストール」または\n「ホーム画面に追加」を選んでください');
     }
   }
 
   function handleClose() {
     setShow(false);
-    localStorage.setItem('recipe_banner_closed', Date.now());
   }
 
   if (!show) return null;
