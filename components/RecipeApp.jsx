@@ -80,8 +80,8 @@ function InstallBanner() {
     window.addEventListener('beforeinstallprompt', handler);
     window.addEventListener('appinstalled', function(){ setShow(false); });
 
-    // iPhone Safari
-    if (isIOS) {
+    // iPhone Safari（stateではなくローカル変数iosを直接使う）
+    if (ios) {
       setTimeout(function(){ setShow(true); }, 2000);
     }
 
