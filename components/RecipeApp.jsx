@@ -93,7 +93,7 @@ function InstallBanner() {
       deferredPrompt.prompt();
       deferredPrompt.userChoice.then(function(){ setDeferredPrompt(null); setShow(false); });
     } else if (isIOS) {
-      alert('Safariの下部にある共有ボタン（四角に矢印）をタップして「ホーム画面に追加」を選んでください。');
+      alert('① SafariでこのページのURLを開く\n② 下部の共有ボタン（四角に矢印）をタップ\n③「ホーム画面に追加」を選ぶ\n\n※ Chrome・Firefoxでは追加できません');
     }
   }
 
@@ -109,7 +109,7 @@ function InstallBanner() {
       <div style={{ flex:1 }}>
         <p style={{ margin:"0 0 2px", fontWeight:800, fontSize:14, color:"#7c3a1e" }}>ホーム画面に追加する</p>
         <p style={{ margin:0, fontSize:11, color:"#b56a2a" }}>
-          {isIOS ? "共有ボタン → ホーム画面に追加" : "アプリとしてインストール"}
+          {isIOS ? "Safariで開く → 共有 → ホーム画面に追加" : "アプリとしてインストール"}
         </p>
       </div>
       <button onClick={handleInstall} style={{ background:"linear-gradient(90deg,#e07b3a,#d05a20)", color:"#fff", border:"none", borderRadius:10, padding:"8px 14px", fontWeight:800, fontSize:13, cursor:"pointer", flexShrink:0, whiteSpace:"nowrap" }}>
