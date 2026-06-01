@@ -57,6 +57,66 @@ async function callAI(prompt) {
   if (!m) throw new Error("JSONが見つかりません");
   return JSON.parse(m[0]);
 }
+function InstallBanner() {
+  var [show, setShow] = useState(false);
+  var [deferredPrompt, setDeferredPrompt] = useState(null);
+  var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  var isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+
+  useEffect(function() {
+    if (isStandalone) return;
+    var closed = localStorage.getItem('recipe_banner_closed');
+    if (closed && Date.now() - parseInt(closed) < 86400000) return;
+
+    // Android Chrome
+    var handler = function(e) {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setTimeout(function(){ setShow(true); }, 2000);
+    };
+    window.addEventListener('beforeinstallprompt', handler);
+    window.addEventListener('appinstalled', function(){ setShow(false); });
+
+    // iPhone Safari
+    if (isIOS) {
+      setTimeout(function(){ setShow(true); }, 2000);
+    }
+
+    return function() { window.removeEventListener('beforeinstallprompt', handler); };
+  }, []);
+
+  function handleInstall() {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(function(){ setDeferredPrompt(null); setShow(false); });
+    } else if (isIOS) {
+      alert('Safariの下部にある共有ボタン（四角に矢印）をタップして「ホーム画面に追加」を選んでください。');
+    }
+  }
+
+  function handleClose() {
+    setShow(false);
+    localStorage.setItem('recipe_banner_closed', Date.now());
+  }
+
+  if (!show) return null;
+  return (
+    <div style={{ position:"fixed", bottom:0, left:0, right:0, background:"#fff", borderTop:"2px solid #e07b3a", padding:"12px 16px 28px", display:"flex", alignItems:"center", gap:12, zIndex:200, boxShadow:"0 -4px 20px rgba(200,120,60,0.15)" }}>
+      <span style={{ fontSize:"1.8rem", flexShrink:0 }}>📲</span>
+      <div style={{ flex:1 }}>
+        <p style={{ margin:"0 0 2px", fontWeight:800, fontSize:14, color:"#7c3a1e" }}>ホーム画面に追加する</p>
+        <p style={{ margin:0, fontSize:11, color:"#b56a2a" }}>
+          {isIOS ? "共有ボタン → ホーム画面に追加" : "アプリとしてインストール"}
+        </p>
+      </div>
+      <button onClick={handleInstall} style={{ background:"linear-gradient(90deg,#e07b3a,#d05a20)", color:"#fff", border:"none", borderRadius:10, padding:"8px 14px", fontWeight:800, fontSize:13, cursor:"pointer", flexShrink:0, whiteSpace:"nowrap" }}>
+        {isIOS ? "方法を見る" : "追加"}
+      </button>
+      <button onClick={handleClose} style={{ background:"none", border:"none", color:"#bbb", fontSize:"1rem", cursor:"pointer", padding:4, flexShrink:0 }}>✕</button>
+    </div>
+  );
+}
+
 function AdBanner() {
   return (
     <div style={{ position:"sticky", bottom:0, left:0, right:0, background:"#fff", borderTop:"1px solid #f3d5b0", padding:"8px 16px", display:"flex", flexDirection:"column", alignItems:"center", gap:4, zIndex:100 }}>
@@ -658,10 +718,12 @@ export default function App() {
   };
 
   function wrap(ch) {
+    // ローディング中・AI分析中は広告を非表示（AdSenseポリシー対応）
+    var showAdBanner = !loading && step !== 1;
     return (
       <div style={{ minHeight:"100vh", background:"linear-gradient(135deg,#fff8f0 0%,#fef3e2 100%)", fontFamily:"'Hiragino Sans','Meiryo',sans-serif", paddingBottom:80 }}>
         <div style={{ maxWidth:520, margin:"0 auto", padding:"24px 16px" }}>{ch}</div>
-        <AdBanner />
+        {showAdBanner && <AdBanner />}
       </div>
     );
   }
@@ -745,6 +807,7 @@ export default function App() {
   return wrap(
     <div>
       <UpgradeModal open={showUpgrade} onClose={function(){ setShowUpgrade(false); }} />
+      <InstallBanner />
       <AdModal open={showAd} onComplete={function(){ var u=getUsage(); u.count=Math.max(0,(u.count||0)-AD_BONUS); saveUsage(u); setUsage(Object.assign({},u)); setShowAd(false); }} />
 
       <div style={{ textAlign:"center", marginBottom:16 }}>
